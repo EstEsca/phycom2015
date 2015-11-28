@@ -14,8 +14,8 @@ using namespace std;
 
 long double C = 300000000.0;
 long double R = 6400.0;
-long double TIMERESOLUTION = 100000.0;
-// in picoseconds, simulation-time for a tick
+long double TIMERESOLUTION = 100.0;
+// in nanoseconds, simulation-time for a tick
 long double RTIMERESOLUTION = 100000.0;
 // in microseconds, real-time for a tick
 #define ERRORRATE 1000
@@ -56,7 +56,7 @@ long double dist(long double x, long double y, long double z, long double a, lon
   return sqrt((x-a)*(x-a)+(y-b)*(y-b)+(z-c)*(z-c));
 }
 long double cDist(long double x, long double y, long double z, long double a, long double b, long double c, long long error){
-  return dist(x,y,z,a,b,c)-(((long double)(C * error)+0.0)/1000000000000);
+  return dist(x,y,z,a,b,c)-(((long double)(C * error)+0.0)/1000000000);
 }
 int chkComm(long double x,long double y,long double z,long double a,long double b, long double c){
   long double check=(a*x-x*x+b*y-y*y+c*z-z*z)
@@ -98,15 +98,26 @@ private:
 public:
   sate(){}
   void setSateposition(){
-    theta_ = randomFloat(0.0, M_PI);
-    phi_ =  randomFloat(0.0, 2*M_PI);
+    theta_ = randomFloat(0.0, 2*M_PI);
+    phi_ =  randomFloat(0.0, M_PI);
     rad_ = R+randomFloat(100,100+ALTCOEFF);
 
     x_=tpr_x(theta_, phi_, rad_);
     y_=tpr_y(theta_, phi_, rad_);
     z_=tpr_z(theta_, phi_, rad_);
-//    cout << "TPR: "<<theta_<<" "<<phi_<<" "<<rad_<<" XYZ: "<<x_<<" "<<y_<<" "<<z_<<endl;
+    cout << "TPR: "<<theta_<<" "<<phi_<<" "<<rad_<<" XYZ: "<<x_<<" "<<y_<<" "<<z_<<endl;
   }
+/*  ON DEV
+    void setSateposition(int i, long double k){
+    if(i > (vCenter.size()-1)){
+      cout << "FATAL ERROR: THERE ARE UP TO #" << vCenter.size()-1 << " CENTERS" << endl;
+    }
+    else{
+      center* Center = vCenter[i];
+
+    }
+  }
+  */
   void setSateposition(int i, long double p, long double q);
   void setSateposition(long double a, long double b, long double c){
       theta_ = a;
@@ -116,7 +127,7 @@ public:
       x_=tpr_x(theta_, phi_, rad_);
       y_=tpr_y(theta_, phi_, rad_);
       z_=tpr_z(theta_, phi_, rad_);
-//      cout << "TPR: "<<theta_<<" "<<phi_<<" "<<rad_<<" XYZ: "<<x_<<" "<<y_<<" "<<z_<<endl;
+      cout << "TPR: "<<theta_<<" "<<phi_<<" "<<rad_<<" XYZ: "<<x_<<" "<<y_<<" "<<z_<<endl;
     }
   void setError(){
     error_=error_+TIMERESOLUTION*ERRORRATE*(rand()%100);
@@ -173,21 +184,18 @@ public:
       x_=tpr_x(theta_, phi_, rad_);
       y_=tpr_y(theta_, phi_, rad_);
       z_=tpr_z(theta_, phi_, rad_);
- //     cout << "TPR: "<<theta_<<" "<<phi_<<" "<<rad_<<" XYZ: "<<x_<<" "<<y_<<" "<<z_<<endl;
+      cout << "TPR: "<<theta_<<" "<<phi_<<" "<<rad_<<" XYZ: "<<x_<<" "<<y_<<" "<<z_<<endl;
     }
   void setCenterposition(){
-
-    theta_ = randomFloat(0.0, M_PI);
-    phi_ =  randomFloat(0.0, 2*M_PI);
+    theta_ = randomFloat(0.0, 2*M_PI);
+    phi_ =  randomFloat(0.0, M_PI);
     rad_ = R;
 
     x_=tpr_x(theta_, phi_, rad_);
     y_=tpr_y(theta_, phi_, rad_);
     z_=tpr_z(theta_, phi_, rad_);
-
-//    cout << "TPR: "<<theta_<<" "<<phi_<<" "<<rad_<<" XYZ: "<<x_<<" "<<y_<<" "<<z_<<endl;
+    cout << "TPR: "<<theta_<<" "<<phi_<<" "<<rad_<<" XYZ: "<<x_<<" "<<y_<<" "<<z_<<endl;
   }
-
   void init(){
     cout << "DEBUG: INITIALIZING CENTER WITH (NEW) SATES SET" << endl;
     sate_.clear();
@@ -250,7 +258,7 @@ public:
       sate* Sate = &vSate[i];
       if(chkComm(x_,y_,z_,Sate->getx(),Sate->gety(),Sate->getz())){
         commSate_.push_back(Sate);
- //       cout << "DEBUG: COMMUNICATABLE SATE FOUUND WITH TPR: "<<Sate->getx()<<" "<<Sate->gety()<<" "<<Sate->getz()<<endl;
+        cout << "DEBUG: COMMUNICATABLE SATE FOUUND WITH TPR: "<<Sate->getx()<<" "<<Sate->gety()<<" "<<Sate->getz()<<endl;
       }
     }
   }
@@ -262,20 +270,20 @@ public:
     x_=tpr_x(theta_, phi_, rad_);
     y_=tpr_y(theta_, phi_, rad_);
     z_=tpr_z(theta_, phi_, rad_);
- //   cout << "TPR: "<<theta_<<" "<<phi_<<" "<<rad_<<" XYZ: "<<x_<<" "<<y_<<" "<<z_<<endl;
+    cout << "TPR: "<<theta_<<" "<<phi_<<" "<<rad_<<" XYZ: "<<x_<<" "<<y_<<" "<<z_<<endl;
   }
   void setUserposition(){
-    theta_ = randomFloat(0.0, M_PI);
-    phi_ =  randomFloat(0.0, 2*M_PI);
+    theta_ = randomFloat(0.0, 2*M_PI);
+    phi_ =  randomFloat(0.0, M_PI);
     rad_ = R;
 
     x_=tpr_x(theta_, phi_, rad_);
     y_=tpr_y(theta_, phi_, rad_);
     z_=tpr_z(theta_, phi_, rad_);
- //   cout << "TPR: "<<theta_<<" "<<phi_<<" "<<rad_<<" XYZ: "<<x_<<" "<<y_<<" "<<z_<<endl;
+    cout << "TPR: "<<theta_<<" "<<phi_<<" "<<rad_<<" XYZ: "<<x_<<" "<<y_<<" "<<z_<<endl;
   }
 
-  xyz* printCoordinate(void){
+  void printCoordinate(void){
     if(commSate_.size() < 3){
       cout << "FATAL ERROR: NOT ENOUGH SATES" << endl;
       cout << "DEBUG: YOU HAVE "<<commSate_.size()<<" COMMUNICATABLE SATES NOW" << endl;
@@ -292,7 +300,7 @@ public:
               sate* S1 = commSate_[i];
               sate* S2 = commSate_[j];
               sate* S3 = commSate_[k];
-//              cout << "NOW CALCULATING WITH "<<i<<", "<<j<<", "<<k<<" SATES" << endl;
+              cout << "NOW CALCULATING WITH "<<i<<", "<<j<<", "<<k<<" SATES" << endl;
               xyz* XYZ = getCoordinate(S1->getx(),S1->gety(),S1->getz(),
                                        S2->getx(),S2->gety(),S2->getz(),
                                        S3->getx(),S3->gety(),S3->getz(),
@@ -300,7 +308,7 @@ public:
                                        cDist(x_,y_,z_,S2->getx(),S2->gety(),S2->getz(),S2->getError()),
                                        cDist(x_,y_,z_,S3->getx(),S3->gety(),S3->getz(),S3->getError()));
             //A의 좌표, B의 좌표, C의 좌표, A까지 추정 거리, B까지 추정 거리, C까지 추정 거리
-//            cout << XYZ->x_<<" "<< XYZ->y_<<" "<< XYZ->z_<<" "<< endl;
+            cout << XYZ->x_<<" "<< XYZ->y_<<" "<< XYZ->z_<<" "<< endl;
             ax = ax + XYZ->x_;
             ay = ay + XYZ->y_;
             az = az + XYZ->z_;
@@ -314,28 +322,18 @@ public:
       ax = ax / (n+.0);
       ay = ay / (n+.0);
       az = az / (n+.0);
-/*
+
       PRINTLINE;
       cout << "AVERAGE X ASSUMPTION: " << ax << endl;
       cout << "AVERAGE Y ASSUMPTION: " << ay << endl;
       cout << "AVERAGE Z ASSUMPTION: " << az << endl;
       PRINTLINE;
-*/
       at = acos(az/sqrt(ax*ax+ay*ay+az*az));
       ap = atan2(ay,ax);
       ar = sqrt(ax*ax+ay*ay+az*az);
-/*
       cout << "AVERAGE THETA ASSUMPTION: " << at << endl;
       cout << "AVERAGE PHI ASSUMPTION: " << ap << endl;
       cout << "AVERAGE RHO ASSUMPTION: " << ar << endl;
-*/
-
-      xyz* XYZ = new xyz();
-      XYZ->x_ = ax;
-      XYZ->y_ = ay;
-      XYZ->z_ = az;
-
-      return XYZ;
     }
   }
 
@@ -453,15 +451,15 @@ void sate::setSateposition(int i, long double p, long double q){
         y_=sy;
         z_=sz;
 
-//        cout << "DEBUG: A SATE GENERATED  WITH ";
+        cout << "DEBUG: A SATE GENERATED  WITH ";
         break;
       }
       else{
 
       }
     }
-//    cout << "TPR: "<<theta_<<" "<<phi_<<" "<<rad_<<endl;
-//    cout << "XYZ: "<<x_<<" "<<y_<<" "<<z_<<endl;
+    cout << "TPR: "<<theta_<<" "<<phi_<<" "<<rad_<<endl;
+    cout << "XYZ: "<<x_<<" "<<y_<<" "<<z_<<endl;
   }
 }
 
@@ -477,9 +475,18 @@ int main(){
   cout << "THIS IS A TEST PROGRAMME" << endl;
   cout << "SETTINGS: "<< endl << "TIME IN SIMULATION FOR A TICK(n): " << TIMERESOLUTION << endl;
   cout << "TIME IN REAL WORLD FOR A TICK(u): " << RTIMERESOLUTION << endl;
-
 /*
-  //USER POSITION ASSUMING
+  cout << "HOW MANY SATES ARE THERE IN THIS SYSTEM: " << endl;
+  cin >> i;
+
+  for(int k=0;k<i;k++){
+    vSate.push_back(sate());
+  }
+
+//  cout << Sate.getx()<<" "<<" "<<Sate.gety()<<" "<<Sate.getz()<<endl;
+
+  cout << vSate.size() << " OF SATES HAVE BEEN CREATED" << endl;
+*/
   center* Center;
   sate* Sate;
 
@@ -502,7 +509,16 @@ int main(){
   }
   for(int k=0;;k++){
     PRINTLINE;
-
+/*
+    cout << "INPUT "<<k<<" SATE'S POSITION VALUE: "<<endl;
+    vSate.push_back(sate());
+    Sate = &vSate[k];
+    cin >> a >> b >> c;
+    if(a < 0 || b < 0 || c < 0){
+      break;
+    }
+    Sate->setSateposition(a,b,c);
+*/
     cout << "INPUT SATE "<<k<<"'S TARGET CENTER, MIN RAD, MAX RAD: "<<endl;
     cout << "TO SKIP, INPUT ANY NEGATIVE INTEGERS" << endl;
     vSate.push_back(sate());
@@ -522,7 +538,14 @@ int main(){
       Center->init();
     }
   }
-
+/*
+  for(int k=0;k<i;k++){
+    Sate = &vSate[i];
+    cin >> a >> b >> c;
+    Sate->setSateposition(a, b, c);
+    Sate->setError(.0);
+  }
+*/
   user* User = new user();
   PRINTLINE;
   cout << "INPUT USER'S POS IN TPR <THETA, PHI>: ";
@@ -531,84 +554,6 @@ int main(){
   User->setUserposition(a, b ,R);
   User->init();
   User->printCoordinate();
-*/
-
-
-//Test2
-
-sate* S1;
-sate* S2;
-sate* S3;
-
-long double at, ap, ar, ax, ay, az, eDist;
-int count;
-
-for(unsigned long i=0;i<1000000000;i=i+10){
-    count = 0;
-    for(int j=0;j<10000;j++){
- //       PRINTLINE;
- //       cout << "DEBUG: ERROR IS : " << i << ", " << j << " TRY" << endl;
- //       PRINTLINE;
-        vCenter.push_back(center(0.0));
-        center* Center = &vCenter[0];
-        Center->setCenterposition();
-
-        user* User = new user();
-        User->setUserposition(Center->gett(),Center->getp(),Center->getr());
-//        cout << "DEBUG: USER WITH TPR: " << User->gett() << " " << User->getp() << " " << User->getr() << " GENERATED" << endl;
-
-        sate* Sate;
-        for(int k=0;k<3;k++){
-            vSate.push_back(sate());
-            Sate = &vSate[k];
-            Sate->setError(i);
-            Sate->setSateposition(0,R+ALTCOEFF,R+ALTCOEFF*(rand()%2));
-//            cout << "DEBUG: SATE WITH TPR: " << Sate->gett() << " " << Sate->getp() << " " << Sate->getr() << " GENERATED" << endl;
-        }
-
-        S1=&vSate[0];
-        S2=&vSate[1];
-        S3=&vSate[3];
-
- //       cout << "USER XYZ: " << User->getx() << " " << User->gety() << " " << User->getz() << endl;
-
-        xyz* XYZ;
-        User->init();
-        XYZ = User->printCoordinate();
-
-        ax = XYZ->x_;
-        ay = XYZ->y_;
-        az = XYZ->z_;
-
-        at = acos(az/sqrt(ax*ax+ay*ay+az*az));
-        ap = atan2(ay,ax);
-        ar = sqrt(ax*ax+ay*ay+az*az);
-
-        ar = 6400.0;
-        ax = tpr_x(at,ap,ar);
-        ay = tpr_y(at,ap,ar);
-
-
-//        cout << "DEBUG: XYZ ASSUMTION: " << ax << " " << ay << " " << az << endl;
-//        cout << "DEBUG: TPR ASSUMTION: " << at << " " << ap << " " << ar << endl;
-
-        eDist=dist(ax,ay,az,User->getx(),User->gety(),User->getz());
-//        cout << "error in meter: "<< eDist*1000 << endl;
-//        cout << "error count: " << count << endl;
-
-        if(eDist>5.0){
-            count++;
-        }
-
-        delete User;
-        delete XYZ;
-        vSate.clear();
-        vCenter.clear();
-    }
-        cout << i <<" ps : " << count << endl;
-
-}//고도를 6400으로 고정할 때 오차가 더 적은지 확인해 보자
-
 
 /*
   //Time Simualtion
